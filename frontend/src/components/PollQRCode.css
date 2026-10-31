@@ -1,0 +1,78 @@
+
+.vs-qr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.vs-qr-modal {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  padding: 32px;
+  background: var(--bg-card, var(--surface, #fff));
+  color: var(--text-primary, var(--text, #171b35));
+  border: 1px solid var(--border-color, var(--border, #e5e9f2));
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+.vs-qr-modal h2 {
+  margin: 0 0 10px;
+}
+.vs-qr-modal p {
+  color: var(--text-secondary, var(--muted, #69738b));
+  font-size: 14px;
+}
+.vs-qr-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+.vs-qr-image {
+  display: inline-flex;
+  padding: 16px;
+  margin: 20px auto;
+  background: white;
+  border-radius: 14px;
+}
+.vs-qr-link {
+  padding: 12px;
+  border: 1px solid var(--border-color, var(--border, #e5e9f2));
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.vs-qr-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.vs-qr-actions button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent, #6c4df6);
+  color: white;
+  font-weight: 600;
+}
+@media (max-width: 450px) {
+  .vs-qr-modal {
+    padding: 24px 16px;
+  }
+  .vs-qr-actions {
+    flex-direction: column;
+  }
+}

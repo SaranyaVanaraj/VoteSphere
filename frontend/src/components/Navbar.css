@@ -1,0 +1,213 @@
+
+.vs-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(20px);
+}
+
+.vs-navbar {
+  max-width: 1280px;
+  min-height: 78px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.vs-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.vs-brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 5px 22px rgba(139, 92, 246, 0.3);
+}
+
+.vs-brand-name {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.9px;
+  color: var(--text-primary);
+}
+
+.vs-brand-name span {
+  color: var(--accent);
+}
+
+.vs-desktop-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vs-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 11px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.vs-nav-link:hover,
+.vs-nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.vs-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vs-login-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px;
+}
+
+.vs-login-link:hover {
+  color: var(--accent);
+}
+
+.vs-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 19px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: var(--gradient-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.vs-cta-btn:hover {
+  transform: translateY(-2px);
+}
+
+.vs-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vs-logout-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.vs-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.vs-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 850px) {
+  .vs-navbar {
+    min-height: 70px;
+    padding: 0 18px;
+  }
+
+  .vs-desktop-links,
+  .vs-login-link,
+  .vs-cta-btn,
+  .vs-logout-btn {
+    display: none;
+  }
+
+  .vs-menu-btn {
+    display: inline-flex;
+  }
+
+  .vs-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 20px 20px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+  }
+
+  .vs-mobile-menu a,
+  .vs-mobile-menu button {
+    display: block;
+    padding: 13px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .vs-mobile-menu a:hover,
+  .vs-mobile-menu button:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 420px) {
+  .vs-brand-name {
+    font-size: 20px;
+  }
+
+  .vs-navbar {
+    gap: 10px;
+  }
+
+  .vs-nav-actions {
+    gap: 8px;
+  }
+}

@@ -1,0 +1,580 @@
+
+.vs-dashboard {
+  min-height: calc(100vh - 78px);
+  padding: 45px 6% 90px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.vs-dashboard-container {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.vs-dashboard-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 32px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.vs-dashboard-topline span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.vs-dashboard-date {
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+.vs-dashboard-date svg {
+  color: var(--success);
+}
+
+.vs-dashboard-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.vs-dashboard-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.vs-dashboard-heading h1 {
+  font-size: clamp(36px, 4.3vw, 53px);
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin: 14px 0;
+}
+
+.vs-heading-dot {
+  color: var(--accent);
+}
+
+.vs-dashboard-heading p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.vs-dashboard-create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 15px 20px;
+  border-radius: 13px;
+  background: var(--gradient-primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+  transition: transform 0.2s;
+}
+
+.vs-dashboard-create:hover {
+  transform: translateY(-2px);
+}
+
+/* Analytics cards */
+
+.vs-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 35px;
+}
+
+.vs-dashboard-stat {
+  position: relative;
+  padding: 27px;
+  border: 1px solid var(--border-color);
+  border-radius: 19px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.vs-dashboard-stat:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.vs-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 23px;
+}
+
+.vs-stat-symbol {
+  width: 49px;
+  height: 49px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.vs-stat-symbol.purple {
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.13);
+}
+
+.vs-stat-symbol.blue {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.vs-stat-symbol.green {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.vs-stat-corner {
+  color: var(--text-muted);
+}
+
+.vs-stat-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.vs-stat-number {
+  display: block;
+  font-size: 39px;
+  letter-spacing: -1.7px;
+  line-height: 1.15;
+}
+
+.vs-stat-description {
+  display: block;
+  margin-top: 11px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Poll management */
+
+.vs-dashboard-polls {
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 21px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.vs-polls-heading {
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.vs-polls-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vs-polls-title-row h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.6px;
+}
+
+.vs-polls-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 27px;
+  height: 27px;
+  padding: 0 7px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.vs-polls-heading p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 9px 0 0;
+}
+
+.vs-polls-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.vs-polls-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 225px;
+  min-height: 43px;
+  padding: 0 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+  background: var(--bg-primary);
+  color: var(--text-muted);
+}
+
+.vs-polls-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.vs-polls-filter {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
+.vs-polls-filter select {
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vs-polls-filter select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Poll cards */
+
+.vs-dashboard-poll-list {
+  padding: 9px 30px;
+}
+
+.vs-dashboard-poll-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 27px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.vs-dashboard-poll-card:last-child {
+  border-bottom: none;
+}
+
+.vs-poll-card-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.vs-poll-card-topline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 14px;
+}
+
+.vs-poll-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.vs-poll-status > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.vs-poll-status.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.vs-poll-status.closed {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+}
+
+.vs-poll-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.vs-poll-card-main h3 {
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.vs-poll-card-main p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 0;
+}
+
+.vs-poll-card-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.vs-poll-copy,
+.vs-poll-status-button,
+.vs-poll-results-link {
+  min-height: 41px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.vs-poll-copy:hover,
+.vs-poll-status-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.vs-poll-status-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vs-poll-results-link {
+  border-color: transparent;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.vs-poll-results-link:hover {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+/* States */
+
+.vs-dashboard-error {
+  margin: 20px 30px;
+  padding: 13px 16px;
+  border: 1px solid rgba(251, 113, 133, 0.25);
+  border-radius: 11px;
+  background: rgba(251, 113, 133, 0.07);
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.vs-dashboard-state,
+.vs-dashboard-empty {
+  padding: 65px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.vs-dashboard-state p,
+.vs-dashboard-empty p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.vs-dashboard-empty h3 {
+  margin: 17px 0 5px;
+  font-size: 20px;
+}
+
+.vs-empty-icon {
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  border-radius: 19px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.vs-dashboard-empty > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 17px;
+  margin-top: 15px;
+  border-radius: 11px;
+  background: var(--gradient-primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.vs-loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: vs-spin 0.8s linear infinite;
+}
+
+@keyframes vs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vs-polls-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 18px 30px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.vs-dashboard-bottom-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 25px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.vs-dashboard-bottom-note svg {
+  color: var(--success);
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .vs-dashboard-poll-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 850px) {
+  .vs-polls-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .vs-polls-toolbar {
+    width: 100%;
+  }
+
+  .vs-polls-search {
+    flex: 1;
+    width: auto;
+  }
+}
+
+@media (max-width: 650px) {
+  .vs-dashboard {
+    padding: 30px 5% 65px;
+  }
+
+  .vs-dashboard-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .vs-dashboard-create {
+    width: 100%;
+  }
+
+  .vs-dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .vs-polls-heading {
+    padding: 22px;
+  }
+
+  .vs-dashboard-poll-list {
+    padding: 5px 22px;
+  }
+
+  .vs-poll-card-actions {
+    width: 100%;
+  }
+
+  .vs-poll-results-link {
+    flex: 1;
+  }
+
+  .vs-dashboard-topline {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vs-dashboard *,
+  .vs-dashboard *::before,
+  .vs-dashboard *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
