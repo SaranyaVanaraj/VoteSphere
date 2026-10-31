@@ -16,11 +16,16 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return r.Header.Get("Origin") == "http://localhost:5173"
+		origin := r.Header.Get("Origin")
+
+		return origin == "http://localhost:5173" ||
+			origin == "https://vote-sphere-poll.vercel.app"
 	},
 }
+
 
 func PollWebSocket(c *gin.Context) {
 	pollID := c.Param("id")
