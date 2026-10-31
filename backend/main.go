@@ -115,6 +115,6 @@ func main() {
     if port == "" {
         port = "8080"
     }
-    router.Run("0.0.0.0:" + port)
+    r.Run("0.0.0.0:" + port)
     log.Fatal(r.Run(":" + port))
 }
