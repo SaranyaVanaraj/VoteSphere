@@ -1,16 +1,50 @@
-# React + Vite
+# VoteSphere Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+VoteSphere is a real-time polling web application developed using **React.js and Vite**. It provides a responsive interface for creating polls, participating in voting, and viewing live results.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User registration and login
+- Create and manage polls
+- Participate in voting
+- View real-time polling results
+- Dark and light theme support
+- Responsive user interface
 
-## React Compiler
+## Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React.js
+- Vite
+- JavaScript
+- CSS
+- REST APIs and WebSockets
 
-## Expanding the ESLint configuration
+## Local Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**1. Install dependencies**
+
+```bash
+npm install
+```
+
+**2. Configure the backend API**
+
+Create a `.env` file inside the frontend directory:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+**3. Start the development server**
+
+```bash
+npm run dev
+```
+
+## Deployment
+
+The frontend is deployed using Vercel.
+
+**Live Website:** https://vote-sphere-poll.vercel.app/
+
+**Main Repository:** https://github.com/SaranyaVanaraj/VoteSphere.git
