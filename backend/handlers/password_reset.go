@@ -1,18 +1,19 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"crypto/tls"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"log"
-	"net"
 	"net/http"
 	"net/mail"
-	"net/smtp"
 	"net/url"
 	"os"
 	"strings"
@@ -72,111 +73,87 @@ func resetEmailKey(email string) string {
 		hex.EncodeToString(mac.Sum(nil))
 }
 
+// Send password-reset email using Resend HTTPS API.
+// No SMTP connection is required.
 func sendResetEmail(email, resetLink string) error {
-	host := os.Getenv("SMTP_HOST")
-	port := os.Getenv("SMTP_PORT")
-	username := os.Getenv("SMTP_USER")
-	password := os.Getenv("SMTP_PASSWORD")
-	from := os.Getenv("SMTP_FROM")
+	apiKey := strings.TrimSpace(os.Getenv("RESEND_API_KEY"))
+	from := strings.TrimSpace(os.Getenv("RESEND_FROM_EMAIL"))
 
-	if host != "smtp.gmail.com" ||
-		port != "587" ||
-		username == "" ||
-		password == "" ||
-		from == "" {
-		return errors.New("Gmail SMTP configuration is incomplete")
+	if apiKey == "" || from == "" {
+		return errors.New("Resend configuration is incomplete")
 	}
 
-	fromAddress, err := mail.ParseAddress(from)
-	if err != nil || fromAddress.Address != from {
-		return errors.New("invalid SMTP sender address")
+	if _, err := mail.ParseAddress(from); err != nil {
+		return errors.New("invalid Resend sender address")
 	}
 
-	toAddress, err := mail.ParseAddress(email)
-	if err != nil || toAddress.Address != email {
-		return errors.New("invalid recipient email address")
+	body := "Hello,\n\n" +
+		"We received a request to reset your VoteSphere password.\n\n" +
+		"Click the link below to reset your password:\n" +
+		resetLink + "\n\n" +
+		"This link expires in 15 minutes and can be used only once.\n\n" +
+		"If you did not request this, please ignore this email.\n\n" +
+		"VoteSphere Team"
+
+	payload := struct {
+		From    string   `json:"from"`
+		To      []string `json:"to"`
+		Subject string   `json:"subject"`
+		Text    string   `json:"text"`
+	}{
+		From:    from,
+		To:      []string{email},
+		Subject: "VoteSphere Password Reset",
+		Text:    body,
 	}
 
-	body := "Hello,\r\n\r\n" +
-		"We received a request to reset your VoteSphere password.\r\n\r\n" +
-		"Open the link below:\r\n" +
-		resetLink + "\r\n\r\n" +
-		"This link expires in 15 minutes and can be used only once.\r\n\r\n" +
-		"If you did not request this, please ignore this email.\r\n"
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
 
-	message := []byte(
-		"From: " + from + "\r\n" +
-			"To: " + email + "\r\n" +
-			"Subject: VoteSphere Password Reset\r\n" +
-			"MIME-Version: 1.0\r\n" +
-			"Content-Type: text/plain; charset=UTF-8\r\n\r\n" +
-			body,
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		15*time.Second,
 	)
+	defer cancel()
 
-	address := net.JoinHostPort(host, port)
-
-	// Use a bounded SMTP connection and STARTTLS.
-	conn, err := net.DialTimeout(
-		"tcp",
-		address,
-		10*time.Second,
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		"https://api.resend.com/emails",
+		bytes.NewReader(data),
 	)
 	if err != nil {
 		return err
 	}
 
-	_ = conn.SetDeadline(time.Now().Add(20 * time.Second))
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Content-Type", "application/json")
 
-	client, err := smtp.NewClient(conn, host)
+	client := &http.Client{
+		Timeout: 15 * time.Second,
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
-		conn.Close()
-		return err
+		return fmt.Errorf("Resend request failed: %w", err)
 	}
-	defer client.Close()
+	defer resp.Body.Close()
 
-	ok, _ := client.Extension("STARTTLS")
-	if !ok {
-		return errors.New("SMTP server does not support STARTTLS")
-	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		details, _ := io.ReadAll(
+			io.LimitReader(resp.Body, 2048),
+		)
 
-	tlsConfig := &tls.Config{
-		ServerName: host,
-		MinVersion: tls.VersionTLS12,
-	}
-
-	if err := client.StartTLS(tlsConfig); err != nil {
-		return err
+		return fmt.Errorf(
+			"Resend returned HTTP %d: %s",
+			resp.StatusCode,
+			string(details),
+		)
 	}
 
-	auth := smtp.PlainAuth("", username, password, host)
-
-	if err := client.Auth(auth); err != nil {
-		return err
-	}
-
-	if err := client.Mail(from); err != nil {
-		return err
-	}
-
-	if err := client.Rcpt(email); err != nil {
-		return err
-	}
-
-	writer, err := client.Data()
-	if err != nil {
-		return err
-	}
-
-	if _, err := writer.Write(message); err != nil {
-		writer.Close()
-		return err
-	}
-
-	if err := writer.Close(); err != nil {
-		return err
-	}
-
-	return client.Quit()
+	return nil
 }
 
 func ForgotPassword(c *gin.Context) {
@@ -204,7 +181,8 @@ func ForgotPassword(c *gin.Context) {
 	)
 	defer cancel()
 
-	// Redis cooldown applies even if the email is not registered.
+	// Apply a 60-second Redis cooldown per email.
+	// This also applies to unregistered addresses.
 	allowed, err := config.RedisClient.SetNX(
 		ctx,
 		resetEmailKey(email),
@@ -214,6 +192,7 @@ func ForgotPassword(c *gin.Context) {
 
 	if err != nil {
 		log.Println("Password reset Redis error:", err)
+
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"error": "Please try again later",
 		})
@@ -242,6 +221,7 @@ func ForgotPassword(c *gin.Context) {
 
 	if err != nil {
 		log.Println("Password reset user lookup failed:", err)
+
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"error": "Please try again later",
 		})
@@ -265,9 +245,14 @@ func ForgotPassword(c *gin.Context) {
 
 	if err != nil ||
 		parsedURL.Host == "" ||
+		parsedURL.User != nil ||
+		parsedURL.RawQuery != "" ||
+		parsedURL.Fragment != "" ||
+		parsedURL.Path != "" ||
 		(parsedURL.Scheme != "https" &&
 			!(parsedURL.Scheme == "http" &&
 				parsedURL.Hostname() == "localhost")) {
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Password reset URL is not configured",
 		})
@@ -290,7 +275,8 @@ func ForgotPassword(c *gin.Context) {
 
 	collection := config.DB.Collection("password_resets")
 
-	// Update an existing record without modifying its _id.
+	// Keep one reset record per user.
+	// Do not overwrite the existing immutable _id.
 	_, err = collection.UpdateOne(
 		ctx,
 		bson.M{
@@ -311,30 +297,36 @@ func ForgotPassword(c *gin.Context) {
 
 	if err != nil {
 		log.Println("Password reset record error:", err)
+
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"error": "Please try again later",
 		})
 		return
 	}
 
+	// Attempt delivery through Resend.
 	if err := sendResetEmail(email, resetLink); err != nil {
 		log.Println("Password reset email failed:", err)
 
+		// Remove only the token that failed to send.
 		cleanupCtx, cleanupCancel := context.WithTimeout(
 			context.Background(),
 			5*time.Second,
 		)
 		defer cleanupCancel()
 
-		_, _ = collection.DeleteOne(
+		if _, cleanupErr := collection.DeleteOne(
 			cleanupCtx,
 			bson.M{
 				"user_id":    user.ID,
 				"token_hash": tokenHash,
 			},
-		)
+		); cleanupErr != nil {
+			log.Println("Reset token cleanup failed:", cleanupErr)
+		}
 	}
 
+	// Do not disclose whether an email is registered.
 	c.JSON(http.StatusOK, gin.H{
 		"message": resetMessage,
 	})
@@ -353,6 +345,7 @@ func ResetPassword(c *gin.Context) {
 	if len(input.Token) != 64 ||
 		len([]byte(input.Password)) < 8 ||
 		len([]byte(input.Password)) > 72 {
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid token or password (8-72 bytes)",
 		})
@@ -371,7 +364,7 @@ func ResetPassword(c *gin.Context) {
 	hash := sha256.Sum256(tokenBytes)
 	tokenHash := hex.EncodeToString(hash[:])
 
-	// Hash the password before starting the transaction.
+	// Hash the new password before consuming the token.
 	passwordHash, err := bcrypt.GenerateFromPassword(
 		[]byte(input.Password),
 		bcrypt.DefaultCost,
@@ -399,6 +392,8 @@ func ResetPassword(c *gin.Context) {
 	}
 	defer session.EndSession(ctx)
 
+	// Consume the token and update the password
+	// within the same MongoDB transaction.
 	_, err = session.WithTransaction(
 		ctx,
 		func(txCtx context.Context) (interface{}, error) {
@@ -440,6 +435,7 @@ func ResetPassword(c *gin.Context) {
 				return nil, errors.New("user not found")
 			}
 
+			// Invalidate any other outstanding reset links.
 			_, err = config.DB.Collection("password_resets").
 				DeleteMany(
 					txCtx,
@@ -457,10 +453,17 @@ func ResetPassword(c *gin.Context) {
 	)
 
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Reset link is invalid, expired, or already used",
+			})
+			return
+		}
+
 		log.Println("Password reset transaction failed:", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Reset link is invalid, expired, or already used",
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"error": "Unable to reset password. Please try again.",
 		})
 		return
 	}
