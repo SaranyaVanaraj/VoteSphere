@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -44,7 +43,7 @@ func main() {
 	)
 	defer cancel()
 
-	// Create unique email index
+	// Unique email index
 	_, err := config.DB.Collection("users").Indexes().CreateOne(
 		ctx,
 		mongo.IndexModel{
@@ -59,7 +58,7 @@ func main() {
 		log.Fatal("Could not create email index: ", err)
 	}
 
-	// Create unique voter per poll index
+	// Unique voter per poll index
 	_, err = config.DB.Collection("votes").Indexes().CreateOne(
 		ctx,
 		mongo.IndexModel{
@@ -75,6 +74,24 @@ func main() {
 		log.Fatal("Could not create vote index: ", err)
 	}
 
+	// Password reset token TTL index
+	// MongoDB automatically removes expired reset records.
+	_, err = config.DB.Collection("password_resets").
+		Indexes().CreateOne(
+		ctx,
+		mongo.IndexModel{
+			Keys: bson.D{
+				{Key: "expires_at", Value: 1},
+			},
+			Options: options.Index().
+				SetExpireAfterSeconds(0),
+		},
+	)
+
+	if err != nil {
+		log.Fatal("Could not create password reset TTL index: ", err)
+	}
+
 	// Initialize Gin
 	r := gin.Default()
 
@@ -82,7 +99,6 @@ func main() {
 	r.Use(func(c *gin.Context) {
 		origin := c.GetHeader("Origin")
 
-		// Allowed frontend URLs
 		if origin == "http://localhost:5173" ||
 			origin == "https://vote-sphere-poll.vercel.app" {
 

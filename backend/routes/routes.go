@@ -1,4 +1,3 @@
-
 package routes
 
 import (
@@ -12,32 +11,55 @@ import (
 
 func Register(r *gin.Engine) {
 
-	// Authentication routes
+	// Authentication routes (public)
 	auth := r.Group("/api/auth")
 
 	auth.POST("/signup", handlers.Signup)
 	auth.POST("/login", handlers.Login)
 
-	// Public APIs
-	// Poll information can be retrieved publicly,
-	// but submitting a vote requires authentication.
-	r.GET("/api/polls/:id", handlers.GetPublicPoll)
+	// Password recovery (public)
+	auth.POST(
+		"/forgot-password",
+		middleware.PasswordResetRateLimit(),
+		handlers.ForgotPassword,
+	)
+
+	auth.POST(
+		"/reset-password",
+		middleware.PasswordResetRateLimit(),
+		handlers.ResetPassword,
+	)
+
+	// Public poll information
+	r.GET(
+		"/api/polls/:id",
+		handlers.GetPublicPoll,
+	)
 
 	// Public poll results
-	r.GET("/api/polls/:id/results", handlers.GetPollResults)
+	r.GET(
+		"/api/polls/:id/results",
+		handlers.GetPollResults,
+	)
 
-	// Public WebSocket for real-time results
-	r.GET("/api/polls/:id/ws", handlers.PollWebSocket)
+	// Public WebSocket for live poll results
+	r.GET(
+		"/api/polls/:id/ws",
+		handlers.PollWebSocket,
+	)
 
-	// Owner WebSocket: requires a valid single-use ticket.
-	// Keep these commented until the handlers are enabled.
-	// r.GET("/api/polls/:id/owner-ws", handlers.OwnerPollWebSocket)
+	// Owner WebSocket requires a valid ticket.
+	// Keep disabled until the handlers are enabled.
+	// r.GET(
+	//     "/api/polls/:id/owner-ws",
+	//     handlers.OwnerPollWebSocket,
+	// )
 
 	// Protected APIs
 	protected := r.Group("/api")
 	protected.Use(middleware.RequireAuth())
 
-	// Get currently logged-in user
+	// Currently logged-in user
 	protected.GET("/me", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"userID": c.GetString("userID"),
@@ -45,12 +67,18 @@ func Register(r *gin.Engine) {
 	})
 
 	// Create a new poll
-	protected.POST("/polls", handlers.CreatePoll)
+	protected.POST(
+		"/polls",
+		handlers.CreatePoll,
+	)
 
 	// Get polls created by the logged-in user
-	protected.GET("/my-polls", handlers.GetMyPolls)
+	protected.GET(
+		"/my-polls",
+		handlers.GetMyPolls,
+	)
 
-	// Get owner-specific poll results
+	// Owner-specific poll results
 	protected.GET(
 		"/my-polls/:id/results",
 		handlers.GetOwnerPollResults,
@@ -74,5 +102,3 @@ func Register(r *gin.Engine) {
 		handlers.SubmitVote,
 	)
 }
-
-

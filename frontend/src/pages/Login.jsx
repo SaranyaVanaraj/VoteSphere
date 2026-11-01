@@ -5,6 +5,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+
 import {
   Mail,
   Lock,
@@ -27,7 +28,7 @@ function Login() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Get the original poll URL, if the user came from a QR code
+  // Get the original page URL if the user came from a poll
   const next = searchParams.get("next");
 
   // Allow only internal application paths
@@ -39,9 +40,13 @@ function Login() {
       ? next
       : "/dashboard";
 
-  // Preserve the poll link when navigating to signup
+  // Preserve the original poll URL for signup
   const signupLink =
     `/signup?next=${encodeURIComponent(safeNext)}`;
+
+  // Preserve the original poll URL for password reset
+  const forgotPasswordLink =
+    `/forgot-password?next=${encodeURIComponent(safeNext)}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,17 +66,25 @@ function Login() {
       });
 
       if (!data.token) {
-        throw new Error("Login failed. No authentication token received.");
+        throw new Error(
+          "Login failed. No authentication token received."
+        );
       }
 
-      // Save login information
+      // Store authentication details
       sessionStorage.setItem("token", data.token);
-      sessionStorage.setItem("user", JSON.stringify(data.user));
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
-      // Return to the scanned poll or dashboard
+      // Redirect to original poll or dashboard
       navigate(safeNext, { replace: true });
     } catch (error) {
-      setMessage(error.message || "Unable to sign in. Please try again.");
+      setMessage(
+        error.message ||
+          "Unable to sign in. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -91,7 +104,11 @@ function Login() {
           and view live results.
         </p>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form
+          onSubmit={handleSubmit}
+          className="auth-form"
+        >
+          {/* Email Address */}
           <label htmlFor="login-email">
             Email Address
           </label>
@@ -115,6 +132,7 @@ function Login() {
             />
           </div>
 
+          {/* Password */}
           <label htmlFor="login-password">
             Password
           </label>
@@ -124,7 +142,11 @@ function Login() {
 
             <input
               id="login-password"
-              type={showPassword ? "text" : "password"}
+              type={
+                showPassword
+                  ? "text"
+                  : "password"
+              }
               placeholder="Enter your password"
               value={form.password}
               onChange={(e) =>
@@ -140,7 +162,9 @@ function Login() {
             <button
               type="button"
               className="password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
               aria-label={
                 showPassword
                   ? "Hide password"
@@ -155,21 +179,50 @@ function Login() {
             </button>
           </div>
 
+          {/* Forgot Password */}
+          <div
+            style={{
+              textAlign: "right",
+              marginTop: "4px",
+              marginBottom: "12px",
+            }}
+          >
+            <Link
+              to={forgotPasswordLink}
+              style={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "var(--accent, #6366f1)",
+                textDecoration: "none",
+              }}
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Error Message */}
           {message && (
-            <p className="form-message" role="alert">
+            <p
+              className="form-message"
+              role="alert"
+            >
               {message}
             </p>
           )}
 
+          {/* Sign In Button */}
           <button
             type="submit"
             className="auth-submit"
             disabled={loading}
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {loading
+              ? "Signing In..."
+              : "Sign In"}
           </button>
         </form>
 
+        {/* Signup Link */}
         <p className="auth-switch">
           Don't have an account?{" "}
           <Link to={signupLink}>
@@ -182,4 +235,3 @@ function Login() {
 }
 
 export default Login;
-

@@ -1,4 +1,3 @@
-
 package handlers
 
 import (
@@ -16,7 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
@@ -25,7 +23,6 @@ var upgrader = websocket.Upgrader{
 			origin == "https://vote-sphere-poll.vercel.app"
 	},
 }
-
 
 func PollWebSocket(c *gin.Context) {
 	pollID := c.Param("id")

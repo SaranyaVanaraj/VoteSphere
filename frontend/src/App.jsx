@@ -7,10 +7,11 @@ import {
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import CreatePoll from "./pages/CreatePoll";
 import Vote from "./pages/Vote";
@@ -25,28 +26,47 @@ function App() {
 
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
 
-        {/* Login required for voting */}
-        <Route element={<ProtectedRoute />}>
-          <Route
-            path="/poll/:id"
-            element={<Vote />}
-          />
-        </Route>
+        {/* Password recovery - no login required */}
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
 
-        {/* Results page */}
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+        {/* Public results */}
         <Route
           path="/results/:id"
           element={<Results />}
         />
 
-        {/* Login required for poll management */}
+        {/* Protected routes - login required */}
         <Route element={<ProtectedRoute />}>
+          {/* Voting */}
+          <Route
+            path="/poll/:id"
+            element={<Vote />}
+          />
+
+          {/* Poll management */}
           <Route
             path="/dashboard"
             element={<Dashboard />}

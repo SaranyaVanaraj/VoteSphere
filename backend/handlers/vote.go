@@ -1,4 +1,3 @@
-
 package handlers
 
 import (
@@ -161,4 +160,3 @@ func SubmitVote(c *gin.Context) {
 		"message": "Vote submitted successfully",
 	})
 }
-
