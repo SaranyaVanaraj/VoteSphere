@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,6 +24,7 @@ import "./Vote.css";
 
 function Vote() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [poll, setPoll] = useState(null);
   const [selected, setSelected] = useState([]);
@@ -53,7 +54,9 @@ function Vote() {
           setError(err.message || "Unable to load poll.");
         }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -96,23 +99,24 @@ function Vote() {
       return;
     }
 
+    // Require a logged-in account before voting
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      navigate(
+        `/login?next=${encodeURIComponent(`/poll/${id}`)}`,
+        { replace: true }
+      );
+      return;
+    }
+
     setError("");
     setSubmitting(true);
 
     try {
-      let voterId = localStorage.getItem(
-        "votesphere_voter_id"
-      );
+      // Backend identifies the voter from the JWT.
+      await submitVote(id, selected);
 
-      if (!voterId) {
-        voterId = crypto.randomUUID();
-        localStorage.setItem(
-          "votesphere_voter_id",
-          voterId
-        );
-      }
-
-      await submitVote(id, selected, voterId);
       setSuccess(true);
     } catch (err) {
       setError(err.message || "Unable to submit vote.");
@@ -154,6 +158,7 @@ function Vote() {
   }
 
   const isActive = poll.status === "Active";
+
   const canSubmit =
     isActive &&
     selected.length > 0 &&
@@ -233,9 +238,7 @@ function Vote() {
 
               <div className="vs-vote-options">
                 {poll.options.map((option, index) => {
-                  const isSelected = selected.includes(
-                    option.id
-                  );
+                  const isSelected = selected.includes(option.id);
 
                   return (
                     <label
@@ -243,9 +246,7 @@ function Vote() {
                       className={`vs-vote-option ${
                         isSelected ? "selected" : ""
                       } ${
-                        !isActive || success
-                          ? "disabled"
-                          : ""
+                        !isActive || success ? "disabled" : ""
                       }`}
                     >
                       <input
@@ -292,6 +293,7 @@ function Vote() {
               {!isActive && (
                 <div className="vs-vote-notice warning">
                   <LockKeyhole size={19} />
+
                   <div>
                     <strong>Voting is closed</strong>
                     <p>
@@ -373,12 +375,12 @@ function Vote() {
               <div className="vs-vote-card-footer">
                 <span>
                   <ShieldCheck size={15} />
-                  Anonymous participation
+                  Account-required voting
                 </span>
 
                 <span>
                   <LockKeyhole size={14} />
-                  One submission per voter ID
+                  One submission per account
                 </span>
               </div>
             </div>
@@ -404,6 +406,7 @@ function Vote() {
                   <CheckCircle2 size={16} />
                   Voting type
                 </span>
+
                 <strong>
                   {poll.allowMultiple
                     ? "Multiple choice"
@@ -420,6 +423,7 @@ function Vote() {
                   )}
                   Results
                 </span>
+
                 <strong>
                   {poll.showResults ? "Public" : "Private"}
                 </strong>
@@ -430,6 +434,7 @@ function Vote() {
                   <Clock3 size={16} />
                   Poll status
                 </span>
+
                 <strong>
                   {isActive ? "Active" : "Closed"}
                 </strong>
@@ -439,9 +444,10 @@ function Vote() {
             <div className="vs-vote-side-note">
               <ShieldCheck size={18} />
               <span>
-                No account is required to vote.
-                VoteSphere uses a browser-generated voter ID
-                to help prevent duplicate submissions.
+                A VoteSphere account is required to participate.
+                Each account can submit only one response per poll.
+                Individual voting choices are not displayed
+                publicly.
               </span>
             </div>
           </aside>
@@ -452,3 +458,4 @@ function Vote() {
 }
 
 export default Vote;
+

@@ -54,6 +54,10 @@ export function loginUser(credentials) {
 export function createPoll(pollData) {
   const token = sessionStorage.getItem("token");
 
+  if (!token) {
+    throw new Error("Please log in to create a poll.");
+  }
+
   return apiRequest("/api/polls", {
     method: "POST",
     headers: {
@@ -66,6 +70,10 @@ export function createPoll(pollData) {
 // Get polls created by logged-in user
 export function getMyPolls() {
   const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("Please log in to view your polls.");
+  }
 
   return apiRequest("/api/my-polls", {
     headers: {
@@ -81,15 +89,23 @@ export function getPublicPoll(id) {
   );
 }
 
-// Anonymous voting
-export function submitVote(pollId, optionIds, voterId) {
+// Submit vote (LOGIN REQUIRED)
+export function submitVote(pollId, optionIds) {
+  const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("Please log in to vote.");
+  }
+
   return apiRequest(
     `/api/polls/${encodeURIComponent(pollId)}/vote`,
     {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         optionIds,
-        voterId,
       }),
     }
   );
@@ -123,11 +139,15 @@ export function updatePollStatus(pollId, status) {
     }
   );
 }
+
+// Get poll results as the owner (authentication required)
 export function getOwnerPollResults(pollId) {
   const token = sessionStorage.getItem("token");
 
   if (!token) {
-    throw new Error("Please log in to view your poll results.");
+    throw new Error(
+      "Please log in to view your poll results."
+    );
   }
 
   return apiRequest(

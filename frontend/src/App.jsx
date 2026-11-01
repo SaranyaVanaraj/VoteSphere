@@ -24,19 +24,28 @@ function App() {
       <Navbar />
 
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
 
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/poll/:id" element={<Vote />} />
+        {/* Login required for voting */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/poll/:id"
+            element={<Vote />}
+          />
+        </Route>
 
+        {/* Results page */}
         <Route
           path="/results/:id"
           element={<Results />}
         />
 
+        {/* Login required for poll management */}
         <Route element={<ProtectedRoute />}>
           <Route
             path="/dashboard"
