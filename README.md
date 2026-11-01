@@ -1,239 +1,194 @@
 # VoteSphere 🗳️
-### Real-Time Polling and Voting Platform
+### A Real-Time Live Polling Application
 
-VoteSphere is a full-stack real-time polling application that enables users to create polls, share them with participants, collect votes, and visualize results instantly.
+VoteSphere is a full-stack, real-time polling web application that allows users to create polls, participate in voting, and view live results. Built with React.js, Go (Gin), MongoDB, and Redis, the application provides an interactive and responsive polling experience.
 
-Built with **React.js, Go (Gin), MongoDB, and Redis**, VoteSphere provides a responsive, interactive polling experience with real-time updates powered by WebSockets.
+🌐 **Live Website:** https://vote-sphere-poll.vercel.app/
 
-## ✨ Features
+💻 **GitHub Repository:** https://github.com/SaranyaVanaraj/VoteSphere
 
-- **User Authentication:** Secure user registration and login using JWT authentication.
-- **Poll Creation:** Create polls with multiple options and customizable voting settings.
-- **Single and Multiple Selection:** Allow participants to select one or multiple answers depending on the poll configuration.
-- **Real-Time Voting:** View results automatically without refreshing the page.
-- **QR Code Sharing:** Generate, copy, and download QR codes to share polls easily.
-- **Live Results Dashboard:** Visualize voting statistics, percentages, and leading options.
-- **CSV Export:** Download poll results as CSV files for further analysis.
-- **Poll Management:** View, search, filter, close, and reopen created polls.
-- **Result Visibility Control:** Choose whether participants can view poll results.
-- **Duplicate Vote Prevention:** Prevent repeated submissions from the same voter identifier.
-- **Dark and Light Mode:** Switch between themes for a personalized experience.
-- **Responsive Interface:** Designed for desktop and mobile devices.
+---
 
-## 🛠️ Technology Stack
+## Features
+
+- **User Authentication:** Secure user registration and login.
+- **Poll Creation:** Authenticated users can create polls with multiple voting options.
+- **Live Voting:** Users can participate in polls and submit their votes.
+- **Real-Time Results:** Poll results update dynamically using real-time communication.
+- **Poll Management:** Poll creators can manage their polls and view results.
+- **Dark and Light Mode:** Theme switching for a personalized user experience.
+- **Responsive Design:** Optimized for desktop, tablet, and mobile screens.
+- **Secure Backend:** Protected API endpoints and password hashing.
+
+## Technology Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React.js, Vite, CSS |
+| Frontend | React.js, JavaScript, CSS |
 | Backend | Go (Golang), Gin Framework |
 | Database | MongoDB Atlas |
-| Real-Time Communication | Redis Pub/Sub, WebSockets |
-| Authentication | JWT |
-| Icons | Lucide React |
-| QR Code Generation | qrcode.react |
+| Real-Time Communication | Redis, WebSockets |
+| Authentication | JWT, bcrypt |
+| Frontend Deployment | Vercel |
+| Backend Deployment | Render |
+| Version Control | Git and GitHub |
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```text
-                USER / PARTICIPANT
-                        |
-                        v
-                React.js Frontend
-                        |
-                        v
-                  Go + Gin API
-                        |
-              +---------+---------+
-              |                   |
-              v                   v
-         MongoDB Atlas        Redis Pub/Sub
-              |                   |
-              |                   v
-              |              WebSocket
-              |                   |
-              +---------+---------+
-                        |
-                        v
-                Live Results UI
+                  USER
+                    |
+                    v
+           React.js Frontend
+             (Vercel)
+                    |
+                    | REST API / WebSocket
+                    v
+             Go + Gin Backend
+                (Render)
+                    |
+           +--------+--------+
+           |                 |
+           v                 v
+      MongoDB Atlas        Redis
+      User & Poll Data   Real-Time Events
 ```
 
-**Workflow:**
-
-1. A user registers or logs in.
-2. The authenticated user creates a poll.
-3. The poll is stored in MongoDB.
-4. Participants access the poll through a shared link or QR code.
-5. Votes are validated and stored in MongoDB.
-6. Redis Pub/Sub distributes voting updates.
-7. WebSockets notify connected clients.
-8. The React frontend fetches updated results and refreshes the visualization automatically.
-
-## 📁 Project Structure
+## Project Structure
 
 ```text
 VoteSphere/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── styles/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend/
-│   ├── handlers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── main.go
-│   ├── go.mod
-│   └── go.sum
-│
-├── .gitignore
-└── README.md
+|
+|-- backend/
+|   |-- config/
+|   |-- handlers/
+|   |-- middleware/
+|   |-- models/
+|   |-- routes/
+|   |-- main.go
+|   |-- go.mod
+|
+|-- frontend/
+|   |-- public/
+|   |-- src/
+|   |   |-- components/
+|   |   |-- pages/
+|   |   |-- services/
+|   |   |-- App.jsx
+|   |-- package.json
+|
+|-- README.md
 ```
 
-## 🚀 Installation and Setup
+## Getting Started
 
 ### Prerequisites
 
-Ensure the following tools are installed:
+Make sure the following are installed:
 
 - Node.js and npm
-- Go
-- MongoDB Atlas account
-- Redis server
+- Go (Golang)
 - Git
+- MongoDB Atlas account or a MongoDB instance
+- Redis instance
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/VoteSphere.git
+git clone https://github.com/SaranyaVanaraj/VoteSphere.git
 cd VoteSphere
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username.
+### 2. Backend Setup
 
-### 2. Frontend Setup
+Navigate to the backend directory:
 
 ```bash
-cd frontend
-npm install
-npm run dev
+cd backend
 ```
 
-The frontend runs at:
+Install Go dependencies:
 
-`http://localhost:5173`
+```bash
+go mod download
+```
 
-### 3. Backend Setup
+Create a `.env` file in the backend folder and configure the MongoDB connection, Redis connection, JWT secret, and server settings using the environment variable names expected by the backend configuration.
+
+Start the backend:
+
+```bash
+go run main.go
+```
+
+### 3. Frontend Setup
 
 Open another terminal:
 
 ```bash
-cd backend
-go mod download
-go run .
+cd frontend
 ```
 
-The backend runs at:
-
-`http://localhost:8080`
-
-Configure the backend environment variables for your MongoDB connection, Redis connection, and JWT secret according to your backend configuration.
-
-### 4. Redis Setup
-
-Start Redis before running the backend.
-
-For Ubuntu or WSL:
+Install dependencies:
 
 ```bash
-sudo service redis-server start
+npm install
 ```
 
-Verify Redis:
-
-```bash
-redis-cli ping
-```
-
-Expected response:
-
-```text
-PONG
-```
-
-### 5. Frontend API Configuration
-
-Create a `.env` file inside the `frontend` folder:
+Create a `.env` file in the frontend folder:
 
 ```env
 VITE_API_URL=http://localhost:8080
 ```
 
-Restart the Vite development server after changing environment variables.
+Start the frontend:
 
-## 📊 Polling Features
+```bash
+npm run dev
+```
 
-### Poll Creation
+Open the local URL displayed by Vite, typically `http://localhost:5173`.
 
-Authenticated users can create polls by entering a question, adding answer options, and selecting voting preferences.
+## How VoteSphere Works
 
-### Voting
+1. **Register or Login:** Users create an account or log in using their credentials.
+2. **Create a Poll:** An authenticated user creates a poll with a question and voting options.
+3. **Share and Participate:** Users access the poll and submit their votes.
+4. **View Results:** The application displays voting results and updates them in real time.
+5. **Manage Polls:** Poll creators can view their created polls and manage their status.
 
-Participants can access polls through shareable links or QR codes. Voting is validated by the backend to reduce duplicate submissions.
+## Security
 
-### Live Results
+VoteSphere incorporates several security measures:
 
-VoteSphere uses Redis Pub/Sub and WebSockets to notify connected clients of new votes. Results are updated automatically without requiring a manual page refresh.
+- Password hashing using bcrypt
+- JWT-based authentication
+- Protected API routes
+- MongoDB-backed user accounts
+- Environment variables for sensitive configuration
+- Backend validation of incoming requests
 
-### Results Export
+Sensitive information such as database credentials, API secrets, and `.env` files should never be committed to the repository.
 
-Poll creators can export their poll results in CSV format, including option names, vote counts, and percentage distribution.
+## Deployment
 
-### Poll Management
+The application is deployed using:
 
-Creators can manage their polls from the dashboard, including closing and reopening polls, sharing links, and viewing results.
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Database:** MongoDB Atlas
+- **Real-Time Infrastructure:** Redis
 
-## 🔐 Security
+**Live Application:** https://vote-sphere-poll.vercel.app/
 
-- JWT-based authentication for protected endpoints.
-- Backend validation of poll creation and vote submissions.
-- Poll ownership checks for creator-only operations.
-- Duplicate vote protection using database constraints.
-- Controlled access to private poll results.
+## Future Enhancements
 
-## 🎨 User Interface
+- Poll scheduling and automatic expiration
+- Advanced voting analytics and visualizations
+- Exporting poll results
+- Additional poll customization options
+- Improved accessibility and multilingual support
 
-VoteSphere features a modern interface with:
-
-- Dark and light themes
-- Responsive layouts
-- Interactive poll cards
-- Live voting indicators
-- Visual result bars
-- QR code sharing dialogs
-- Dashboard analytics
-
-## 🌐 Deployment
-
-**Live Application:** Coming soon
-
-Deployment links will be updated after hosting the frontend, backend, database, and Redis services.
-
-## 🔮 Future Enhancements
-
-- Scheduled poll creation
-- Advanced participation analytics
-- Additional chart visualizations
-- Poll templates
-- Enhanced administrative controls
 
 
 
