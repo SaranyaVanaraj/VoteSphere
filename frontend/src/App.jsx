@@ -10,8 +10,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgetPassword";
-import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import CreatePoll from "./pages/CreatePoll";
 import Vote from "./pages/Vote";
@@ -41,18 +39,7 @@ function App() {
           element={<Signup />}
         />
 
-        {/* Password recovery - no login required */}
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
-
-        {/* Public results */}
+        {/* Public poll results */}
         <Route
           path="/results/:id"
           element={<Results />}

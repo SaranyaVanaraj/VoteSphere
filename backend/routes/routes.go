@@ -17,19 +17,6 @@ func Register(r *gin.Engine) {
 	auth.POST("/signup", handlers.Signup)
 	auth.POST("/login", handlers.Login)
 
-	// Password recovery (public)
-	auth.POST(
-		"/forgot-password",
-		middleware.PasswordResetRateLimit(),
-		handlers.ForgotPassword,
-	)
-
-	auth.POST(
-		"/reset-password",
-		middleware.PasswordResetRateLimit(),
-		handlers.ResetPassword,
-	)
-
 	// Public poll information
 	r.GET(
 		"/api/polls/:id",

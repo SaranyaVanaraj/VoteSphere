@@ -74,24 +74,6 @@ func main() {
 		log.Fatal("Could not create vote index: ", err)
 	}
 
-	// Password reset token TTL index
-	// MongoDB automatically removes expired reset records.
-	_, err = config.DB.Collection("password_resets").
-		Indexes().CreateOne(
-		ctx,
-		mongo.IndexModel{
-			Keys: bson.D{
-				{Key: "expires_at", Value: 1},
-			},
-			Options: options.Index().
-				SetExpireAfterSeconds(0),
-		},
-	)
-
-	if err != nil {
-		log.Fatal("Could not create password reset TTL index: ", err)
-	}
-
 	// Initialize Gin
 	r := gin.Default()
 

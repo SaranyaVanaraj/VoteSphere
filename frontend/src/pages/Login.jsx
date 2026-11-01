@@ -44,10 +44,6 @@ function Login() {
   const signupLink =
     `/signup?next=${encodeURIComponent(safeNext)}`;
 
-  // Preserve the original poll URL for password reset
-  const forgotPasswordLink =
-    `/forgot-password?next=${encodeURIComponent(safeNext)}`;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -177,27 +173,6 @@ function Login() {
                 <Eye size={19} />
               )}
             </button>
-          </div>
-
-          {/* Forgot Password */}
-          <div
-            style={{
-              textAlign: "right",
-              marginTop: "4px",
-              marginBottom: "12px",
-            }}
-          >
-            <Link
-              to={forgotPasswordLink}
-              style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "var(--accent, #6366f1)",
-                textDecoration: "none",
-              }}
-            >
-              Forgot Password?
-            </Link>
           </div>
 
           {/* Error Message */}
