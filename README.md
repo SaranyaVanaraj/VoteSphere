@@ -5,7 +5,7 @@ VoteSphere is a full-stack, real-time polling web application that allows users 
 
 🌐 **Live Website:** https://vote-sphere-poll.vercel.app/
 
-💻 **GitHub Repository:** https://github.com/SaranyaVanaraj/VoteSphere
+💻 **GitHub Repository:** https://github.com/SaranyaVanaraj/VoteSphere.git
 
 ---
 
