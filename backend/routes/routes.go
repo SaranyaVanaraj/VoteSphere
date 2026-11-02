@@ -1,3 +1,4 @@
+
 package routes
 
 import (
@@ -11,79 +12,62 @@ import (
 
 func Register(r *gin.Engine) {
 
-	// Authentication routes (public)
+	// Authentication routes
 	auth := r.Group("/api/auth")
-
 	auth.POST("/signup", handlers.Signup)
 	auth.POST("/login", handlers.Login)
 
 	// Public poll information
-	r.GET(
-		"/api/polls/:id",
-		handlers.GetPublicPoll,
-	)
+	r.GET("/api/polls/:id", handlers.GetPublicPoll)
 
 	// Public poll results
-	r.GET(
-		"/api/polls/:id/results",
-		handlers.GetPollResults,
-	)
+	r.GET("/api/polls/:id/results", handlers.GetPollResults)
 
 	// Public WebSocket for live poll results
-	r.GET(
-		"/api/polls/:id/ws",
-		handlers.PollWebSocket,
-	)
+	r.GET("/api/polls/:id/ws", handlers.PollWebSocket)
 
-	// Owner WebSocket requires a valid ticket.
-	// Keep disabled until the handlers are enabled.
-	// r.GET(
-	//     "/api/polls/:id/owner-ws",
-	//     handlers.OwnerPollWebSocket,
-	// )
+	// Owner WebSocket (validated using a temporary ticket)
+	r.GET(
+		"/api/polls/:id/owner-ws",
+		handlers.OwnerPollWebSocket,
+	)
 
 	// Protected APIs
 	protected := r.Group("/api")
 	protected.Use(middleware.RequireAuth())
 
-	// Currently logged-in user
+	// Logged-in user
 	protected.GET("/me", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"userID": c.GetString("userID"),
 		})
 	})
 
-	// Create a new poll
-	protected.POST(
-		"/polls",
-		handlers.CreatePoll,
-	)
+	// Create poll
+	protected.POST("/polls", handlers.CreatePoll)
 
-	// Get polls created by the logged-in user
-	protected.GET(
-		"/my-polls",
-		handlers.GetMyPolls,
-	)
+	// Get user's polls
+	protected.GET("/my-polls", handlers.GetMyPolls)
 
-	// Owner-specific poll results
+	// Owner poll results
 	protected.GET(
 		"/my-polls/:id/results",
 		handlers.GetOwnerPollResults,
 	)
 
 	// Owner WebSocket ticket
-	// protected.POST(
-	//     "/my-polls/:id/ws-ticket",
-	//     handlers.CreateOwnerWSTicket,
-	// )
+	protected.POST(
+		"/my-polls/:id/ws-ticket",
+		handlers.CreateOwnerWSTicket,
+	)
 
-	// Close or reopen a poll
+	// Close or reopen poll
 	protected.PATCH(
 		"/polls/:id/status",
 		handlers.UpdatePollStatus,
 	)
 
-	// Voting requires authentication
+	// Submit vote (login required)
 	protected.POST(
 		"/polls/:id/vote",
 		handlers.SubmitVote,

@@ -191,5 +191,5 @@ func OwnerPollWebSocket(c *gin.Context) {
 	}
 }
 func isPollOwner(poll models.Poll, userID string) bool {
-	return userID != "" && poll.UserID == userID
+    return userID != "" && poll.UserID == userID
 }
